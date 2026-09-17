@@ -1,0 +1,4 @@
+{"ts": 1789649585.9423068, "dst": "dns:google.com:443", "allowed": false}
+{"ts": 1789649585.9429193, "dst": "8.8.8.8", "allowed": false}
+{"ts": 1789649617.3024616, "dst": "8.8.8.8", "allowed": false}
+{"ts": 1789649617.3026369, "dst": "dns:google.com:443", "allowed": false}

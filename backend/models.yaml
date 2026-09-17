@@ -1,0 +1,27 @@
+# Model registry — add a model = append here, no code change (PS requirement).
+# Sized for THIS box: CPU-only, 15GB RAM. Smallest variants that still prove
+# routing across task types. Scale up names when GPU hardware arrives.
+models:
+  - id: coder
+    ollama: qwen2.5-coder:1.5b
+    role: code generation, debugging, scripts
+    vram_gb: 1
+    keywords: [python, code, function, bug, debug, script, api, refactor, sql, regex]
+
+  - id: general
+    ollama: qwen2.5:1.5b
+    role: summaries, approval notes, SOP Q&A, reasoning
+    vram_gb: 1
+    keywords: [summarize, summary, report, approval, note, sop, explain, draft, letter, meeting]
+
+  - id: vision
+    ollama: qwen2.5vl:3b
+    role: scanned PDFs, handwritten notes, P&ID drawings, photos
+    vram_gb: 2.5
+    keywords: [image, photo, scan, scanned, drawing, diagram, pid, piping, handwritten, ocr, inspect]
+
+  - id: embed
+    ollama: nomic-embed-text
+    role: RAG embeddings (Step 4), never answers directly
+    vram_gb: 0.3
+    keywords: []  # never a route target — excluded from scoring
