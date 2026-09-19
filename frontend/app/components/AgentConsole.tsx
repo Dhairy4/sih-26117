@@ -27,193 +27,210 @@ export default function AgentConsole({
   onOpenSourceInspector,
   onOpenExecutionDetails,
 }: AgentConsoleProps) {
-  const [selectedToolMenu, setSelectedToolMenu] = useState(false);
-  const [selectedKnowledgeMenu, setSelectedKnowledgeMenu] = useState(false);
-  const isInsufficient = agentFinal.toLowerCase().includes("insufficient evidence");
+  const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [showKnowledgeMenu, setShowKnowledgeMenu] = useState(false);
+
+  const availableTools = [
+    "Knowledge Search",
+    "Code Execution",
+    "File Read",
+    "File Write",
+    "OCR / Vision",
+    "Generate DOCX",
+  ];
+
+  const availableKnowledge = [
+    "All Knowledge",
+    "SOP-07 (P-2104B Inspection)",
+  ];
 
   return (
-    <main className="panel-container center-panel">
-      <div className="agent-workspace-container">
-        {/* WORKSPACE HEADER ROW */}
-        <div className="workspace-header-row">
-          <div>
-            <div className="ai-agent-label">AI AGENT</div>
-            <h1 className="sovereign-agent-title">Sovereign Agent</h1>
-            <div className="sovereign-agent-sub">
-              Local reasoning • Tool enabled • Evidence grounded
-            </div>
-          </div>
-          <div className="ollama-status-badge font-mono">
-            <span className="dot dot-green"></span> OLLAMA LOCAL
+    <main className="panel-container center-panel font-sans">
+      {/* AGENT HEADER BAR */}
+      <div className="agent-header-bar">
+        <div>
+          <div className="agent-category-tag">AI AGENT</div>
+          <h2 className="agent-title-text">Sovereign Agent</h2>
+          <div className="agent-subtitle-text">
+            Local reasoning • Tool enabled • Evidence grounded
           </div>
         </div>
+        <div className="header-status-pill">
+          <span className="dot dot-green"></span> OLLAMA LOCAL
+        </div>
+      </div>
 
-        {/* QUICK ACTIONS ROW (3 PILL BUTTONS) */}
-        <div className="quick-actions-row">
-          <button
-            type="button"
-            className="action-btn-black"
-            onClick={() => setPrompt("Investigate Equipment P-2104B")}
-          >
-            <span>🔍</span> Investigate Equipment
-          </button>
-          <button
-            type="button"
-            className="action-btn-white"
-            onClick={() => setPrompt("Search knowledge base for vibration findings.")}
-          >
-            <span>📄</span> Search Knowledge
-          </button>
-          <button
-            type="button"
-            className="action-btn-white"
-            onClick={() => setPrompt("Prepare an investigation report for P-2104B.")}
-          >
-            <span>📄</span> Generate Report
-          </button>
+      {/* QUICK ACTIONS ROW (EXACTLY 3) */}
+      <div className="quick-actions-row">
+        <button
+          type="button"
+          className="btn-action-primary"
+          onClick={() => {
+            setPrompt("What is the inspection status of P-2104B?");
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Investigate Equipment
+        </button>
+
+        <button
+          type="button"
+          className="btn-action-secondary"
+          onClick={() => {
+            setPrompt("Search knowledge base for vibration findings.");
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          Search Knowledge
+        </button>
+
+        <button
+          type="button"
+          className="btn-action-secondary"
+          onClick={() => {
+            setPrompt("Prepare an investigation report for P-2104B.");
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Generate Report
+        </button>
+      </div>
+
+      {/* CHAT MESSAGES STREAM */}
+      <div className="chat-scroll-area">
+        {/* USER PROMPT BUBBLE */}
+        <div className="user-msg-container">
+          <div className="user-msg-bubble-col">
+            <div className="user-msg-bubble font-sans">
+              Prepare an investigation report for P-2104B.
+            </div>
+            <div className="user-msg-time">10:42 AM</div>
+          </div>
+          <div className="user-avatar-circle">D</div>
         </div>
 
-        {/* CHAT CONVERSATION STREAM */}
-        <div className="chat-stream-box">
-          {/* USER MESSAGE (RIGHT ALIGNED) */}
-          <div className="user-msg-block">
-            <div className="user-bubble-wrap">
-              <div className="user-bubble-exact">
-                Prepare an investigation report for P-2104B.
-              </div>
-              <div className="user-avatar-circle">
-                D
-              </div>
-            </div>
-            <div className="msg-timestamp">10:42 AM</div>
-          </div>
+        {/* AGENT RESPONSE BLOCK */}
+        <div className="agent-response-row">
+          <div className="agent-avatar-circle">🤖</div>
+          <div className="agent-msg-body">
+            <p className="agent-intro-text font-sans">
+              I'll search the local knowledge base for relevant information about P-2104B.
+            </p>
 
-          {/* AGENT RUNNING STATE */}
-          {isRunning && (
-            <div className="agent-msg-block">
-              <div className="robot-avatar-icon">🤖</div>
-              <div className="agent-msg-content" style={{ color: "var(--text-muted)" }}>
-                <span className="dot dot-green" style={{ animation: "pulse 1.5s infinite" }}></span> Local agent reasoning and searching knowledge base...
+            {/* EVIDENCE FOUND CARD (EXACT MINT GREEN MATCH) */}
+            <div className="evidence-card-mint">
+              <div className="evidence-header-row">
+                <div className="evidence-title-flex font-sans">
+                  <div className="evidence-check-circle">✓</div>
+                  <span>Evidence found</span>
+                </div>
+                <span className="evidence-badge-tag font-mono">[S1]</span>
               </div>
-            </div>
-          )}
 
-          {/* AGENT RESPONSE STREAM (EXACT PIXEL-PERFECT MATCH) */}
-          {(!isRunning || agentFinal) && (
-            <div className="agent-msg-block">
-              <div className="robot-avatar-icon">🤖</div>
-              <div className="agent-msg-content">
-                {isInsufficient ? (
-                  <div style={{ padding: "16px", background: "#FAF5FF", border: "1px solid #E9D5FF", borderRadius: "8px", color: "#6B21A8" }}>
-                    <div className="font-mono font-bold" style={{ fontSize: "12px", marginBottom: "4px" }}>
-                      ⚠ INSUFFICIENT EVIDENCE
-                    </div>
-                    <div>{agentFinal}</div>
+              <div className="evidence-inner-doc-box">
+                <div className="evidence-doc-left">
+                  <div className="evidence-doc-icon-sq">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                    </svg>
                   </div>
-                ) : (
-                  <>
-                    <p className="agent-intro-p">
-                      I'll search the local knowledge base for relevant information about P-2104B.
-                    </p>
+                  <div className="evidence-doc-texts font-sans">
+                    <span className="evidence-doc-title">SOP-07</span>
+                    <span className="evidence-doc-sub">P-2104B Inspection Record</span>
+                    <span className="evidence-doc-match">Exact equipment tag match</span>
+                  </div>
+                </div>
 
-                    {/* MINT GREEN EVIDENCE CARD */}
-                    <div className="evidence-card-mint">
-                      <div className="evidence-mint-header">
-                        <div className="evidence-mint-title">
-                          <span style={{ fontSize: "15px" }}>✔</span> Evidence found
-                        </div>
-                        <div className="evidence-cite-tag">[S1]</div>
-                      </div>
-
-                      <div className="evidence-inner-card">
-                        <div className="evidence-inner-left">
-                          <div className="ev-doc-icon">📄</div>
-                          <div>
-                            <div className="ev-doc-name">SOP-07</div>
-                            <div className="ev-doc-sub">P-2104B Inspection Record</div>
-                            <div className="ev-doc-match">Exact equipment tag match</div>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          className="btn-view-source"
-                          onClick={() =>
-                            onOpenSourceInspector({
-                              cite: "[S1]",
-                              source: "SOP-07",
-                              text:
-                                "P-2104B inspection record. The pump showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks.",
-                            })
-                          }
-                        >
-                          View source →
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* AGENT ANALYSIS PARAGRAPHS */}
-                    <p className="agent-paragraph">
-                      The retrieved record indicates that P-2104B showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks. The equipment tag is P-2104B.
-                    </p>
-
-                    <p className="next-action-prompt">
-                      Would you like me to prepare the full investigation report based on this evidence?
-                    </p>
-
-                    {/* ACTION BUTTONS GROUP */}
-                    <div className="action-buttons-group">
-                      <button
-                        type="button"
-                        className="action-btn-black"
-                        onClick={onRunAgent}
-                      >
-                        <span>📄</span> Review & Generate Report
-                      </button>
-                      <button
-                        type="button"
-                        className="action-btn-white"
-                        onClick={onOpenExecutionDetails}
-                      >
-                        <span>📄</span> Show execution details ▾
-                      </button>
-                    </div>
-
-                    {/* REPORT READY SUCCESS BANNER */}
-                    {deliverableFilename && (
-                      <div className="compact-report-banner" style={{ marginTop: "20px" }}>
-                        <div className="banner-top">
-                          <div>
-                            <span className="text-green font-bold">✓ Report ready</span>
-                            <div className="font-mono text-dim" style={{ fontSize: "12px", marginTop: "2px" }}>
-                              {deliverableFilename}
-                            </div>
-                          </div>
-                          <a
-                            href={`${apiBase}/deliverables/${deliverableFilename}`}
-                            target="_blank"
-                            download
-                            className="action-btn-black"
-                            style={{ textDecoration: "none" }}
-                          >
-                            Download Report (.DOCX)
-                          </a>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
+                <button
+                  type="button"
+                  className="btn-view-source font-sans"
+                  onClick={() =>
+                    onOpenSourceInspector({
+                      cite: "[S1]",
+                      source: "SOP-07",
+                      text: "P-2104B inspection record.\nThe pump showed increased vibration during operation.\nInspection was scheduled for bearing and alignment checks.\nThe equipment tag is P-2104B.",
+                    })
+                  }
+                >
+                  View source →
+                </button>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* CHAT COMPOSER (EXACT MATCH) */}
-        <div className="composer-card-exact">
-          <div className="composer-input-row">
-            <span className="clip-icon">📎</span>
+            {/* AGENT DETAILED ANALYSIS TEXT */}
+            <p className="agent-analysis-paragraph font-sans">
+              The retrieved record indicates that P-2104B showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks. The equipment tag is P-2104B.
+            </p>
+
+            <p className="agent-next-prompt font-sans">
+              Would you like me to prepare the full investigation report based on this evidence?
+            </p>
+
+            {/* ACTION BUTTONS & REPORT CREATED STATE */}
+            <div className="agent-actions-footer">
+              <button
+                type="button"
+                className="btn-action-primary font-sans"
+                onClick={onRunAgent}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Review & Generate Report
+              </button>
+
+              <button
+                type="button"
+                className="btn-action-secondary font-sans"
+                onClick={onOpenExecutionDetails}
+              >
+                Show execution details ▾
+              </button>
+            </div>
+
+            {/* SUCCESS BANNER IF REPORT GENERATED */}
+            {deliverableFilename && (
+              <div style={{ background: "#dcfce7", border: "1px solid #86efac", borderRadius: "8px", padding: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ color: "#16a34a", fontWeight: "bold" }}>✓ Report ready:</span>
+                  <span style={{ fontWeight: 600, color: "#166534" }}>{deliverableFilename}</span>
+                </div>
+                <a
+                  href={`${apiBase}/deliverables/${deliverableFilename}`}
+                  target="_blank"
+                  download
+                  className="btn btn-primary"
+                  style={{ textDecoration: "none", fontSize: "11px", padding: "6px 12px" }}
+                >
+                  Download Report (.DOCX)
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* CHAT INPUT COMPOSER (BOTTOM OF WORKSPACE) */}
+      <div className="chat-composer-box">
+        <div className="composer-card">
+          <div className="composer-top-row">
+            <button type="button" className="composer-attach-btn" title="Attach file">
+              📎
+            </button>
             <textarea
               className="composer-textarea"
-              rows={2}
+              rows={1}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
@@ -228,38 +245,23 @@ export default function AgentConsole({
             />
           </div>
 
-          <div className="composer-tools-row">
-            <div className="composer-left-tools">
+          <div className="composer-bottom-row">
+            <div className="composer-tools-left">
               <div style={{ position: "relative" }}>
                 <button
                   type="button"
-                  className="composer-pill-btn"
-                  onClick={() => setSelectedToolMenu(!selectedToolMenu)}
+                  className="btn-composer-tool"
+                  onClick={() => setShowToolsMenu(!showToolsMenu)}
                 >
-                  <span>🛠</span> Tools ▾
+                  🛠 Tools ▾
                 </button>
-                {selectedToolMenu && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "32px",
-                      left: 0,
-                      background: "#ffffff",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: "8px",
-                      padding: "8px",
-                      boxShadow: "var(--shadow-modal)",
-                      zIndex: 50,
-                      width: "180px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    <div style={{ padding: "4px 8px", fontWeight: 600, color: "var(--text-muted)", fontSize: "10px" }}>
-                      AVAILABLE TOOLS
-                    </div>
-                    <div style={{ padding: "4px 8px" }}>Knowledge Search</div>
-                    <div style={{ padding: "4px 8px" }}>File Read / Write</div>
-                    <div style={{ padding: "4px 8px" }}>Generate DOCX</div>
+                {showToolsMenu && (
+                  <div style={{ position: "absolute", bottom: "32px", left: 0, background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", padding: "8px 0", minWidth: "160px", zIndex: 100 }}>
+                    {availableTools.map((t, idx) => (
+                      <div key={idx} style={{ padding: "6px 12px", fontSize: "11px", color: "#334155", cursor: "pointer" }} onClick={() => setShowToolsMenu(false)}>
+                        {t}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -267,32 +269,18 @@ export default function AgentConsole({
               <div style={{ position: "relative" }}>
                 <button
                   type="button"
-                  className="composer-pill-btn"
-                  onClick={() => setSelectedKnowledgeMenu(!selectedKnowledgeMenu)}
+                  className="btn-composer-tool"
+                  onClick={() => setShowKnowledgeMenu(!showKnowledgeMenu)}
                 >
-                  <span>📚</span> Knowledge ▾
+                  📚 Knowledge ▾
                 </button>
-                {selectedKnowledgeMenu && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "32px",
-                      left: 0,
-                      background: "#ffffff",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: "8px",
-                      padding: "8px",
-                      boxShadow: "var(--shadow-modal)",
-                      zIndex: 50,
-                      width: "180px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    <div style={{ padding: "4px 8px", fontWeight: 600, color: "var(--text-muted)", fontSize: "10px" }}>
-                      KNOWLEDGE BASES
-                    </div>
-                    <div style={{ padding: "4px 8px" }}>All Knowledge</div>
-                    <div style={{ padding: "4px 8px" }}>SOP-07 Inspection</div>
+                {showKnowledgeMenu && (
+                  <div style={{ position: "absolute", bottom: "32px", left: 0, background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", padding: "8px 0", minWidth: "180px", zIndex: 100 }}>
+                    {availableKnowledge.map((k, idx) => (
+                      <div key={idx} style={{ padding: "6px 12px", fontSize: "11px", color: "#334155", cursor: "pointer" }} onClick={() => setShowKnowledgeMenu(false)}>
+                        {k}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -300,10 +288,10 @@ export default function AgentConsole({
 
             <button
               type="button"
+              className="btn-send-square"
               onClick={onRunAgent}
               disabled={isRunning || !prompt.trim()}
-              className="composer-send-square"
-              title="Send Message"
+              title="Send message"
             >
               ➤
             </button>

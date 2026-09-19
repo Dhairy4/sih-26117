@@ -17,47 +17,75 @@ export default function SystemBar({
   const pgOk = checks.postgres?.ok ?? true;
   const mongoOk = checks.mongo?.ok ?? true;
   const qdrantOk = checks.qdrant?.ok ?? true;
-  const ollamaReady = true;
+
   const isSealed = sealStatus?.sealed ?? true;
   const auditValid = auditStatus?.valid ?? true;
 
   return (
-    <footer className="system-footer-exact font-sans">
-      <div className="footer-left-group">
-        <span className="footer-item">
-          📊 PostgreSQL <span className="dot dot-green"></span> <span className="text-green">{pgOk ? "Online" : "Offline"}</span>
+    <footer className="system-bar-container font-sans">
+      {/* LEFT STATUS ITEMS */}
+      <div className="system-bar-left-group">
+        <span className="system-bar-item">
+          <span style={{ fontSize: "12px" }}>🗄️</span>
+          <span>PostgreSQL</span>
+          <span className={`dot ${pgOk ? "dot-green" : "dot-red"}`}></span>
+          <span style={{ fontWeight: 600, color: pgOk ? "#16a34a" : "#ef4444" }}>
+            {pgOk ? "Online" : "Offline"}
+          </span>
         </span>
 
-        <span className="footer-item">
-          🍃 MongoDB <span className="dot dot-green"></span> <span className="text-green">{mongoOk ? "Online" : "Offline"}</span>
+        <span className="system-bar-item">
+          <span style={{ fontSize: "12px" }}>🍃</span>
+          <span>MongoDB</span>
+          <span className={`dot ${mongoOk ? "dot-green" : "dot-red"}`}></span>
+          <span style={{ fontWeight: 600, color: mongoOk ? "#16a34a" : "#ef4444" }}>
+            {mongoOk ? "Online" : "Offline"}
+          </span>
         </span>
 
-        <span className="footer-item">
-          🔍 Qdrant <span className="dot dot-green"></span> <span className="text-green">{qdrantOk ? "Online" : "Offline"}</span>
+        <span className="system-bar-item">
+          <span style={{ fontSize: "12px" }}>🔍</span>
+          <span>Qdrant</span>
+          <span className={`dot ${qdrantOk ? "dot-green" : "dot-red"}`}></span>
+          <span style={{ fontWeight: 600, color: qdrantOk ? "#16a34a" : "#ef4444" }}>
+            {qdrantOk ? "Online" : "Offline"}
+          </span>
         </span>
 
-        <span className="footer-item">
-          🤖 Ollama <span className="dot dot-green"></span> <span className="text-green">{ollamaReady ? "Ready" : "Ready"}</span>
+        <span className="system-bar-item">
+          <span style={{ fontSize: "12px" }}>🤖</span>
+          <span>Ollama</span>
+          <span className="dot dot-green"></span>
+          <span style={{ fontWeight: 600, color: "#16a34a" }}>Ready</span>
         </span>
 
-        <span className="footer-item">
-          🛡 Network Seal <span className="dot dot-green"></span> <span className="text-green">{isSealed ? "Active" : "Inactive"}</span>
+        <span className="system-bar-item" style={{ marginLeft: "8px" }}>
+          <span style={{ fontSize: "12px" }}>🛡️</span>
+          <span>Network Seal</span>
+          <span className={`dot ${isSealed ? "dot-green" : "dot-red"}`}></span>
+          <span style={{ fontWeight: 600, color: isSealed ? "#16a34a" : "#ef4444" }}>
+            {isSealed ? "Active" : "Unsealed"}
+          </span>
         </span>
 
-        <span className="footer-item">
-          ✔ Audit Chain <span className="dot dot-green"></span> <span className="text-green">{auditValid ? "Valid" : "Invalid"}</span>
+        <span className="system-bar-item">
+          <span style={{ fontSize: "12px" }}>✔️</span>
+          <span>Audit Chain</span>
+          <span style={{ fontWeight: 600, color: auditValid ? "#16a34a" : "#ef4444" }}>
+            {auditValid ? "✓ Valid" : "⚠ Invalid"}
+          </span>
         </span>
       </div>
 
-      <div className="footer-right-group">
-        <span className="footer-item">
-          <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>Readiness:</span>{" "}
-          <span className="pass-badge-exact">PASS</span>
-        </span>
-
-        <span className="footer-time">
+      {/* RIGHT STATUS ITEMS */}
+      <div className="system-bar-right-group">
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span>Readiness:</span>
+          <span className="readiness-pass-badge">PASS</span>
+        </div>
+        <div style={{ color: "#94a3b8", fontSize: "11px" }}>
           17 Sep 2026, 10:42 AM
-        </span>
+        </div>
       </div>
     </footer>
   );

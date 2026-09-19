@@ -17,37 +17,33 @@ export default function ApprovalModal({
     <div className="modal-overlay">
       <div className="modal-card" style={{ maxWidth: "440px" }}>
         <div className="modal-header">
-          <span className="modal-icon text-amber">⚠️</span>
-          <div>
-            <h2 className="modal-title">Review report</h2>
-            <div className="modal-subtitle">Human approval required</div>
-          </div>
+          <span className="modal-icon text-amber">⚠</span>
+          <h2 className="modal-title font-sans">Review report</h2>
         </div>
 
-        <div className="modal-body">
-          <div style={{ fontWeight: 600, fontSize: "15px", color: "var(--text-primary)", marginBottom: "4px" }}>
+        <div className="modal-body font-sans">
+          <div className="font-bold text-primary text-base mb-1">
             P-2104B Investigation
           </div>
 
-          <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "12px" }}>
-            Evidence: <span className="font-mono" style={{ fontWeight: 600, color: "var(--text-primary)" }}>[S1] SOP-07</span>
+          <div className="text-muted text-xs font-mono mb-3">
+            Evidence: <span className="text-cyan">[S1] SOP-07</span>
           </div>
 
-          <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "20px", lineHeight: "1.5" }}>
-            The agent has gathered evidence and is ready to generate the official DOCX investigation report. Please confirm execution.
+          <p className="text-secondary text-sm mb-4">
+            The report is based on 1 verified evidence source.
           </p>
 
-          <div className="modal-actions">
+          <div className="modal-actions font-sans">
             <button
               onClick={onCancel || onReject}
-              className="btn btn-secondary"
+              className="btn btn-ghost"
             >
               Cancel
             </button>
             <button
               onClick={onApprove}
-              className="btn"
-              style={{ background: "#d97706", color: "#ffffff", border: "none" }}
+              className="btn btn-amber btn-lg"
             >
               Approve & Generate
             </button>

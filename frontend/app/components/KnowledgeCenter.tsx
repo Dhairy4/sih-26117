@@ -80,128 +80,106 @@ export default function KnowledgeCenter({
     await onSearch(searchQuery);
   };
 
-  const rawHits = searchResult?.hits || [];
-  const uniqueHits = rawHits.filter((h: any, index: number, self: any[]) =>
-    index === self.findIndex((t) => (t.text || "").trim() === (h.text || "").trim())
-  );
-
   return (
-    <aside className="left-panel">
-      {/* KNOWLEDGE HEADER */}
-      <h2 className="sidebar-title-main">Knowledge</h2>
-      <div className="sidebar-subtitle-main">Documents & evidence</div>
+    <aside className="panel-container left-panel font-sans">
+      {/* SIDEBAR HEADER */}
+      <div className="sidebar-header-box">
+        <h2 className="sidebar-title-main">Knowledge</h2>
+        <div className="sidebar-subtitle-main">Documents & evidence</div>
+        <button
+          type="button"
+          className="btn-add-doc"
+          onClick={() => setShowAddDocModal(true)}
+        >
+          <span>+</span> Add Document
+        </button>
+      </div>
 
-      {/* ADD DOCUMENT BUTTON */}
-      <button
-        className="btn-add-doc"
-        onClick={() => setShowAddDocModal(true)}
-      >
-        <span>+</span> Add Document
-      </button>
-
-      {/* SEARCH INPUT WITH CTRL+K */}
-      <form onSubmit={handleSearchSubmit} className="search-input-wrapper">
-        <span className="search-icon-left">🔍</span>
-        <input
-          type="text"
-          className="search-input-field"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search knowledge..."
-        />
-        <span className="search-ctrl-k">Ctrl K</span>
-      </form>
+      {/* SEARCH INPUT */}
+      <div className="sidebar-search-box">
+        <form onSubmit={handleSearchSubmit}>
+          <div className="sidebar-search-input-wrapper">
+            <span className="sidebar-search-icon">🔍</span>
+            <input
+              type="text"
+              className="sidebar-search-input font-sans"
+              placeholder="Search knowledge..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <span className="sidebar-search-shortcut">Ctrl K</span>
+          </div>
+        </form>
+      </div>
 
       {/* DOCUMENTS SECTION */}
-      <div style={{ marginBottom: "20px" }}>
-        <div className="sidebar-section-label">
-          <span>Documents ({documents.length})</span>
-        </div>
+      <div className="sidebar-section-title">
+        <span>Documents ({documents.length})</span>
+      </div>
 
+      <div className="doc-list-container">
         {documents.map((doc) => (
-          <div key={doc.id} className="doc-card-exact">
-            <div className="doc-icon-box">
-              📄
+          <div key={doc.id} className="doc-card-item">
+            <div className="doc-icon-square">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
             </div>
-            <div className="doc-info-block">
-              <div className="doc-name">{doc.source}</div>
-              <div className="doc-sub">{doc.title}</div>
-              <div className="doc-status-line">
-                <span className="dot dot-green"></span> {doc.status}
+            <div className="doc-info-col">
+              <span className="doc-title-text">{doc.source}</span>
+              <span className="doc-sub-text">{doc.title}</span>
+              <div className="doc-status-row">
+                <span className="dot dot-green"></span> Indexed
               </div>
             </div>
-            <div className="doc-dots-menu">⋮</div>
+            <div className="doc-more-dots">⋮</div>
           </div>
         ))}
       </div>
 
       {/* SOURCES SECTION */}
-      <div style={{ marginTop: "16px" }}>
+      <div className="sources-section">
+        <div className="sources-header">Sources</div>
         <div
-          className="sources-row-label"
-          onClick={() => {
-            if (uniqueHits.length > 0) {
-              onOpenSourceInspector(uniqueHits[0]);
-            }
-          }}
+          className="sources-row-link"
+          onClick={() =>
+            onOpenSourceInspector({
+              cite: "[S1]",
+              source: "SOP-07",
+              text: "P-2104B inspection record. The pump showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks.",
+            })
+          }
         >
-          <span>Sources</span>
-          <span style={{ fontSize: "14px", color: "var(--text-muted)" }}>›</span>
+          <span>All indexed sources</span>
+          <span>›</span>
         </div>
-        <div className="sources-sub">All indexed sources</div>
       </div>
-
-      {/* SEARCH EVIDENCE RESULTS (IF SEARCHED) */}
-      {uniqueHits.length > 0 && (
-        <div style={{ marginTop: "24px" }}>
-          <div className="sidebar-section-label">
-            <span>Retrieved Evidence ({uniqueHits.length})</span>
-          </div>
-          {uniqueHits.map((h: any, idx: number) => (
-            <div
-              key={idx}
-              className="doc-card-exact"
-              style={{ cursor: "pointer", flexDirection: "column", gap: "6px" }}
-              onClick={() => onOpenSourceInspector(h)}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontSize: "11px" }}>
-                <span className="font-mono font-bold">[{h.cite || `S${idx + 1}`}] {h.source || "SOP-07"}</span>
-                {h.tag_hit && <span className="doc-status-line">● Tag Match</span>}
-              </div>
-              <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{h.text ? h.text.slice(0, 60) + "..." : "P-2104B Inspection Record"}</div>
-              <div style={{ fontSize: "11px", color: "var(--text-primary)", fontWeight: 600 }}>View source →</div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* ADD DOCUMENT MODAL */}
       {showAddDocModal && (
         <div className="modal-overlay" onClick={() => setShowAddDocModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "480px" }}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-icon">📄</span>
-              <div>
-                <h2 className="modal-title">ADD TO KNOWLEDGE BASE</h2>
-                <div className="modal-subtitle">Upload and index document for sovereign RAG</div>
-              </div>
+              <h3 className="modal-title font-sans">ADD TO KNOWLEDGE BASE</h3>
               <button
-                className="modal-close"
+                type="button"
+                className="btn btn-ghost"
                 onClick={() => setShowAddDocModal(false)}
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleIngestSubmit}>
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>
-                  Document Name / Source
-                </label>
+            <form onSubmit={handleIngestSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Document Name / Source</label>
                 <input
                   type="text"
-                  className="search-input-field"
-                  style={{ paddingLeft: "12px" }}
+                  className="sidebar-search-input"
                   value={sourceInput}
                   onChange={(e) => setSourceInput(e.target.value)}
                   placeholder="e.g. SOP-07"
@@ -209,29 +187,23 @@ export default function KnowledgeCenter({
                 />
               </div>
 
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>
-                  Document Content
-                </label>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Document Text</label>
                 <textarea
-                  className="composer-textarea"
-                  style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px" }}
-                  rows={4}
+                  className="sidebar-search-input"
+                  style={{ height: "90px", resize: "none" }}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Paste document content..."
+                  placeholder="Paste SOP or technical record content..."
                   required
                 />
               </div>
 
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>
-                  Equipment Tags
-                </label>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Equipment Tags</label>
                 <input
                   type="text"
-                  className="search-input-field"
-                  style={{ paddingLeft: "12px" }}
+                  className="sidebar-search-input"
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="e.g. P-2104B"
@@ -239,15 +211,15 @@ export default function KnowledgeCenter({
               </div>
 
               {ingestStage && (
-                <div className="doc-status-line" style={{ fontSize: "12px", marginTop: "8px" }}>
+                <div style={{ color: "#16a34a", fontSize: "12px", fontWeight: 600 }}>
                   {ingestStage}
                 </div>
               )}
 
-              <div className="modal-actions">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "8px" }}>
                 <button
                   type="button"
-                  className="action-btn-white"
+                  className="btn btn-secondary"
                   onClick={() => setShowAddDocModal(false)}
                 >
                   Cancel
@@ -255,9 +227,9 @@ export default function KnowledgeCenter({
                 <button
                   type="submit"
                   disabled={!!ingestStage}
-                  className="action-btn-black"
+                  className="btn btn-primary"
                 >
-                  Ingest & Index
+                  Ingest Document
                 </button>
               </div>
             </form>

@@ -16,63 +16,63 @@ export default function SovereigntyPanel({
   isRunningCanary,
 }: SovereigntyPanelProps) {
   const isSealed = sealStatus?.sealed ?? true;
+  const counts = sealStatus?.counts || { allowed: 0, blocked: 0 };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "480px" }}>
         <div className="modal-header">
-          <span className="modal-icon">🛡️</span>
-          <div>
-            <h2 className="modal-title">SOVEREIGNTY</h2>
-            <div className="modal-subtitle font-mono">Air-gapped network seal & socket protection</div>
-          </div>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <span className="modal-icon text-cyan">🛡️</span>
+          <h2 className="modal-title font-sans">SOVEREIGNTY</h2>
+          <button className="btn btn-xs btn-ghost modal-close font-mono" onClick={onClose}>✕</button>
         </div>
 
-        <div className="modal-body">
-          <div className="sov-status-row font-mono">
+        <div className="modal-body font-sans">
+          <div className="sov-status-row font-mono mb-2">
             <span>Network</span>
-            <span className={isSealed ? "text-green font-bold" : "text-red font-bold"}>
-              ● {isSealed ? "SEALED" : "UNSEALED"}
+            <span className={`font-bold ${isSealed ? "text-green" : "text-red"}`}>
+              ● {isSealed ? "Sealed" : "Unsealed"}
             </span>
           </div>
 
-          <div className="sov-status-row font-mono">
+          <div className="sov-status-row font-mono mb-2">
             <span>External TCP</span>
-            <span style={{ fontWeight: 600 }}>Blocked</span>
+            <span className="text-cyan font-bold">Blocked</span>
           </div>
 
-          <div className="sov-status-row font-mono">
+          <div className="sov-status-row font-mono mb-2">
             <span>External DNS</span>
-            <span style={{ fontWeight: 600 }}>Blocked</span>
+            <span className="text-cyan font-bold">Blocked</span>
           </div>
 
-          <div className="sov-status-row font-mono">
-            <span>Local services</span>
+          <div className="sov-status-row font-mono mb-2">
+            <span>Local loopback</span>
             <span className="text-green font-bold">Allowed</span>
           </div>
 
-          <div className="sov-status-row font-mono">
-            <span>Audit Chain</span>
+          <div className="sov-status-row font-mono mb-2">
+            <span>Traffic stats</span>
+            <span className="text-muted">Allowed: {counts.allowed} | Blocked: {counts.blocked}</span>
+          </div>
+
+          <div className="sov-status-row font-mono mb-4">
+            <span>Audit</span>
             <span className="text-green font-bold">✓ Valid</span>
           </div>
 
           {canaryResult && (
-            <div style={{ marginTop: "14px" }}>
-              <div className="section-label-row font-mono">Canary Verification Output</div>
-              <pre className="canary-result-box font-mono">
-                {typeof canaryResult === "string" ? canaryResult : JSON.stringify(canaryResult, null, 2)}
-              </pre>
-            </div>
+            <pre className="canary-result-box font-mono mb-4">
+              {typeof canaryResult === "string" ? canaryResult : JSON.stringify(canaryResult, null, 2)}
+            </pre>
           )}
 
-          <div className="modal-actions font-sans" style={{ marginTop: "20px" }}>
+          <div className="modal-actions font-mono">
             <button
               onClick={onRunCanary}
               disabled={isRunningCanary}
-              className="btn btn-black btn-full"
+              className="btn btn-primary btn-full"
             >
-              {isRunningCanary ? "Testing..." : "Run Canary"}
+              {isRunningCanary ? "⟳ Testing..." : "Run Canary"}
             </button>
           </div>
         </div>

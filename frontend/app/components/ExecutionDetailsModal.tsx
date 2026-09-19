@@ -18,60 +18,61 @@ export default function ExecutionDetailsModal({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card wide-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <span className="modal-icon">⚡</span>
+        <div className="modal-header font-mono">
+          <span className="modal-icon text-cyan font-mono">⚡</span>
           <div>
-            <h2 className="modal-title">EXECUTION DETAILS</h2>
-            <div className="modal-subtitle font-mono">Agent telemetry & audit status</div>
+            <h2 className="modal-title font-mono">EXECUTION DETAILS</h2>
+            <div className="modal-subtitle font-mono">TECHNICAL AGENT TELEMETRY & AUDIT DATA</div>
           </div>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="btn btn-xs btn-ghost modal-close font-mono" onClick={onClose}>✕</button>
         </div>
 
-        <div className="modal-metadata-grid font-mono" style={{ margin: "16px 0" }}>
+        <div className="modal-metadata-grid font-mono" style={{ margin: "14px 0" }}>
           <div className="meta-box">
             <span className="meta-label">ROUTE</span>
-            <span className="meta-value">{route || "general"}</span>
+            <span className="meta-value text-cyan">{route || "general"}</span>
           </div>
           <div className="meta-box">
-            <span className="meta-label">TOOL</span>
-            <span className="meta-value">kb_search</span>
+            <span className="meta-label">PLAN STEPS</span>
+            <span className="meta-value text-primary">{plan?.length || 5} ACTIONS</span>
           </div>
           <div className="meta-box">
-            <span className="meta-label">RETRIEVAL</span>
-            <span className="meta-value">3 results</span>
-          </div>
-          <div className="meta-box">
-            <span className="meta-label">RERANK</span>
-            <span className="meta-value">P-2104B exact tag</span>
+            <span className="meta-label">TOOLS EXECUTED</span>
+            <span className="meta-value text-green">kb_search</span>
           </div>
           <div className="meta-box">
             <span className="meta-label">AUDIT CHAIN</span>
             <span className="meta-value text-green">VALID ✓</span>
           </div>
-          <div className="meta-box">
-            <span className="meta-label">PLAN STEPS</span>
-            <span className="meta-value">{plan?.length || 5} actions</span>
-          </div>
         </div>
 
-        <div style={{ marginTop: "16px" }}>
-          <div className="section-label-row font-mono">Plan Execution Steps</div>
-          <ol style={{ paddingLeft: "20px", fontSize: "13px", color: "var(--text-secondary)", lineHeight: "1.8" }}>
+        <div className="section-block font-mono">
+          <h4 className="section-title" style={{ marginBottom: "6px" }}>PLAN EXECUTION STEPS</h4>
+          <ol className="timeline-plan-list">
             {(plan && plan.length > 0 ? plan : [
-              "Route request to general pipeline",
-              "Search local vector index for P-2104B evidence",
-              "Extract and rank chunk SOP-07",
-              "Gate action on human review",
-              "Generate DOCX deliverable"
+              "1. Route request",
+              "2. Search knowledge base for evidence",
+              "3. Inspect retrieved evidence",
+              "4. Request human approval for report generation",
+              "5. Produce deliverable"
             ]).map((p, idx) => (
               <li key={idx}>{p}</li>
             ))}
           </ol>
         </div>
 
-        <div className="modal-actions">
-          <button onClick={onClose} className="btn btn-black btn-full">
-            Close Execution Details
+        {steps && steps.length > 0 && (
+          <div className="section-block font-mono">
+            <h4 className="section-title" style={{ marginBottom: "6px" }}>RAW TOOL TELEMETRY</h4>
+            <pre className="raw-json-block font-mono">
+              {JSON.stringify(steps, null, 2)}
+            </pre>
+          </div>
+        )}
+
+        <div className="modal-actions font-mono" style={{ marginTop: "16px" }}>
+          <button onClick={onClose} className="btn btn-primary font-mono btn-full">
+            CLOSE DETAILS
           </button>
         </div>
       </div>

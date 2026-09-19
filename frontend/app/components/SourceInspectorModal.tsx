@@ -12,43 +12,43 @@ export default function SourceInspectorModal({ sourceData, onClose }: SourceInsp
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "560px" }}>
         <div className="modal-header">
-          <span className="modal-icon">📄</span>
+          <span className="modal-icon text-cyan">📄</span>
           <div>
-            <h2 className="modal-title">SOURCE</h2>
-            <div className="modal-subtitle font-mono">{sourceData.source || "SOP-07"} • P-2104B Inspection Record</div>
+            <h2 className="modal-title font-mono">SOURCE INSPECTOR</h2>
+            <div className="modal-subtitle font-mono">{sourceData.source || "SOP-07"}</div>
           </div>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="btn btn-xs btn-ghost modal-close font-mono" onClick={onClose}>✕</button>
         </div>
 
-        <div className="modal-metadata-grid font-mono" style={{ margin: "16px 0" }}>
+        <div className="modal-metadata-grid font-mono" style={{ margin: "14px 0" }}>
           <div className="meta-box">
-            <span className="meta-label">SOURCE</span>
-            <span className="meta-value">{sourceData.source || "SOP-07"}</span>
+            <span className="meta-label">SOURCE DOCUMENT</span>
+            <span className="meta-value text-cyan">{sourceData.source || "SOP-07"}</span>
           </div>
           <div className="meta-box">
-            <span className="meta-label">TAG</span>
+            <span className="meta-label">EQUIPMENT TAG</span>
             <span className="meta-value text-green">P-2104B</span>
           </div>
           <div className="meta-box">
-            <span className="meta-label">MATCH</span>
-            <span className="meta-value text-green">Exact equipment tag</span>
+            <span className="meta-label">CITATION ID</span>
+            <span className="meta-value text-cyan">{sourceData.cite || "[S1]"}</span>
           </div>
           <div className="meta-box">
-            <span className="meta-label">CITATION</span>
-            <span className="meta-value">{sourceData.cite || "[S1]"}</span>
+            <span className="meta-label">TAG MATCH</span>
+            <span className="meta-value text-green">EXACT TAG MATCH ✓</span>
           </div>
         </div>
 
-        <div style={{ marginTop: "16px" }}>
-          <div className="section-label-row font-mono">CONTENT</div>
+        <div className="section-block">
+          <h4 className="section-title font-mono" style={{ marginBottom: "6px" }}>DOCUMENT CONTENT SNIPPET</h4>
           <div className="source-content-box">
-            {sourceData.text || "P-2104B inspection record. The pump showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks."}
+            "{sourceData.text || "P-2104B inspection record. The pump showed increased vibration during operation. Inspection was scheduled for bearing and alignment checks. The equipment tag is P-2104B."}"
           </div>
         </div>
 
-        <div className="modal-actions">
-          <button onClick={onClose} className="btn btn-black btn-full">
-            Close
+        <div className="modal-actions font-mono" style={{ marginTop: "16px" }}>
+          <button onClick={onClose} className="btn btn-primary font-mono btn-full">
+            CLOSE INSPECTOR
           </button>
         </div>
       </div>

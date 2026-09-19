@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
-import Navigation from "./components/Navigation";
 import SystemBar from "./components/SystemBar";
 import KnowledgeCenter from "./components/KnowledgeCenter";
 import AgentConsole from "./components/AgentConsole";
@@ -255,14 +254,12 @@ export default function Home() {
 
   return (
     <div className="app-shell">
-      {/* TOP HEADER */}
+      {/* TOP HEADER (MATCHING REFERENCE IMAGE) */}
       <Header
         sealStatus={sealStatus}
         onOpenSovereignty={() => setShowSovereigntyModal(true)}
         onOpenModels={() => setShowModelsModal(true)}
       />
-
-      {/* CLEAN 2-COLUMN WORKSPACE GRID (320px LEFT | REMAINING CENTER) */}
 
       {/* CLEAN 2-COLUMN WORKSPACE GRID (320px LEFT | REMAINING CENTER) */}
       <div className="workbench-two-col-grid">
