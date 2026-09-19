@@ -36,27 +36,55 @@ export default function KnowledgeCenter({
   const [tagsInput, setTagsInput] = useState("P-2104B");
   const [ingestStage, setIngestStage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+    setSourceInput(fileNameWithoutExt || file.name);
+
+    // Auto extract tag if file name matches P-XXXX pattern
+    const tagMatch = file.name.match(/[A-Z]+-\d+[A-Z]?/i);
+    if (tagMatch) {
+      setTagsInput(tagMatch[0].toUpperCase());
+    }
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const content = evt.target?.result as string;
+      if (content) {
+        setTextInput(content);
+      }
+    };
+    reader.onerror = () => {
+      setTextInput(`Document Content from ${file.name}`);
+    };
+    reader.readAsText(file);
+  };
 
   const handleIngestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!textInput.trim()) return;
 
     try {
-      setIngestStage("Processing...");
+      setIngestStage("Processing document & generating embeddings...");
       const tagsList = tagsInput
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean);
+
       const res = await onIngest(sourceInput, textInput, tagsList);
 
-      setIngestStage("Indexed ✓");
-
       if (res && res.success) {
+        setIngestStage("✓ Indexed & stored in vector database");
         setDocuments((prev) => [
           {
             id: res.doc_id || Date.now().toString(),
             source: sourceInput || "Untitled",
-            title: textInput.slice(0, 30) + "...",
+            title: textInput.trim().slice(0, 40) + "...",
             chunks: res.n_chunks || 1,
             tags: tagsList,
             status: "Indexed",
@@ -66,11 +94,15 @@ export default function KnowledgeCenter({
         setTimeout(() => {
           setShowAddDocModal(false);
           setIngestStage(null);
-        }, 600);
+          setSelectedFile(null);
+        }, 800);
+      } else {
+        setIngestStage("Error: " + (res?.error || "Failed to ingest document"));
+        setTimeout(() => setIngestStage(null), 3000);
       }
-    } catch (err) {
-      setIngestStage("Error");
-      setTimeout(() => setIngestStage(null), 2000);
+    } catch (err: any) {
+      setIngestStage("Error: " + err.message);
+      setTimeout(() => setIngestStage(null), 3000);
     }
   };
 
@@ -176,6 +208,29 @@ export default function KnowledgeCenter({
 
             <form onSubmit={handleIngestSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Upload File or Paste Text</label>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "4px" }}>
+                  <input
+                    type="file"
+                    id="doc-file-input"
+                    style={{ display: "none" }}
+                    accept=".txt,.md,.json,.csv,.log,.doc,.docx,.pdf"
+                    onChange={handleFileSelect}
+                  />
+                  <label
+                    htmlFor="doc-file-input"
+                    className="btn btn-secondary"
+                    style={{ cursor: "pointer", fontSize: "11px", padding: "6px 12px", gap: "6px" }}
+                  >
+                    <span>📁</span> Select Local File
+                  </label>
+                  <span style={{ fontSize: "11px", color: selectedFile ? "#16a34a" : "#64748b", fontWeight: selectedFile ? 600 : 400 }}>
+                    {selectedFile ? `✓ ${selectedFile.name}` : "Or enter text manually below"}
+                  </span>
+                </div>
+              </div>
+
+              <div>
                 <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Document Name / Source</label>
                 <input
                   type="text"
@@ -188,10 +243,10 @@ export default function KnowledgeCenter({
               </div>
 
               <div>
-                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Document Text</label>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Document Text / Content</label>
                 <textarea
                   className="sidebar-search-input"
-                  style={{ height: "90px", resize: "none" }}
+                  style={{ height: "100px", resize: "none" }}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                   placeholder="Paste SOP or technical record content..."
@@ -200,18 +255,18 @@ export default function KnowledgeCenter({
               </div>
 
               <div>
-                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Equipment Tags</label>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "#475569" }}>Equipment Tags (Comma Separated)</label>
                 <input
                   type="text"
                   className="sidebar-search-input"
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
-                  placeholder="e.g. P-2104B"
+                  placeholder="e.g. P-2104B, BEARING-9"
                 />
               </div>
 
               {ingestStage && (
-                <div style={{ color: "#16a34a", fontSize: "12px", fontWeight: 600 }}>
+                <div style={{ color: ingestStage.startsWith("Error") ? "#ef4444" : "#16a34a", fontSize: "12px", fontWeight: 600 }}>
                   {ingestStage}
                 </div>
               )}
@@ -226,7 +281,7 @@ export default function KnowledgeCenter({
                 </button>
                 <button
                   type="submit"
-                  disabled={!!ingestStage}
+                  disabled={!!ingestStage && !ingestStage.startsWith("Error")}
                   className="btn btn-primary"
                 >
                   Ingest Document
