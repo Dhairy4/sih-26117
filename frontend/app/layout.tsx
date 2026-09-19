@@ -1,9 +1,15 @@
-export const metadata = { title: "Sovereign Workbench" };
+import "./globals.css";
+
+export const metadata = {
+  title: "Sovereign AI Workbench (SIH26117)",
+  description: "On-Premise Agentic AI Workbench - Secure, Local, Evidence-Grounded Intelligence",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "system-ui", margin: 24 }}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
+

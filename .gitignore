@@ -3,3 +3,6 @@ __pycache__/
 .env
 node_modules/
 .next/
+*.db
+backend/qdrant_db/
+backend/workspace/
